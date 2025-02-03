@@ -29,3 +29,8 @@ DETECT_LANGUAGES = (
 
 FOCUS_LANG = "Ruby"
 FOCUS_LANG_CCFINDER = "ruby"
+
+DB_PATH = "localhost"
+DB_PORT = 27018
+DB_USER = "root"
+DB_PASSWORD = "password"

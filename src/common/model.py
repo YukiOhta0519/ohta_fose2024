@@ -1,11 +1,18 @@
+import os
+import sys
+
 import pymongo
 
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(project_root)
+
+import config
 
 uri = "mongodb://{}:{}@{}:{}/?authSource=admin".format(
-    "root",
-    "password",
-    "localhost",
-    "27018",
+    config.DB_USER,
+    config.DB_PASSWORD,
+    config.DB_PATH,
+    config.DB_PORT,
 )
 client = pymongo.MongoClient(uri)
 
