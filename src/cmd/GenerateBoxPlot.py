@@ -3,6 +3,8 @@ import sys
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
 from scipy import stats
 
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -49,6 +51,35 @@ def output_boxplot(result_dict: dict, output_file_path: str):
 
     # グラフを表示
     plt.savefig(output_file_path)
+
+
+def output_boxplot_for_letter(product_result_dict: dict, test_result_dict: dict, output_file_path: str):
+    # 言語リスト
+    languages = list(product_result_dict.keys())
+    languages.sort()
+    num_languages = len(languages)
+
+    # プロットの設定
+    fig, ax = plt.subplots(1, num_languages, figsize=(12, 5))
+
+    for i, lang in enumerate(languages):
+        product_values = product_result_dict[lang]
+        test_values = test_result_dict[lang]
+        labels = ("Product", "Test")
+        values = (product_values, test_values)
+        box = ax[i].boxplot(values, tick_labels=labels, widths=0.6, vert=True)
+        if i != 0:
+            ax[i].set_yticklabels([])
+        ax[i].tick_params(axis='x', labelrotation=45)
+        ax[i].set_title(convert_to_output_str(lang))
+        ax[i].set_ylim(0, 1)
+
+        for element in ['boxes', 'whiskers', 'medians', 'caps']:
+            plt.setp(box[element], color='black')
+    
+    # グラフを表示
+    plt.savefig(output_file_path)
+
     
 
 def convert_to_output_str(s: str) -> str:
@@ -242,29 +273,30 @@ def generate_rq2(df):
     product_result_dict = get_clone_ratio(df, "product")
     test_result_dict = get_clone_ratio(df, "test")
 
-    result_dict = {}
-    languages = product_result_dict.keys()
-    sorted_languages = sorted(languages, reverse=True)
+    output_boxplot_for_letter(product_result_dict, test_result_dict, os.path.join(project_root, "dest", "results", "RQ2.pdf"))
 
-    for lang in sorted_languages:
-        print("{}: {}".format(lang, stats.mannwhitneyu(product_result_dict[lang], test_result_dict[lang], alternative='two-sided')))
-        print("")
+    # for lang in sorted_languages:
+    #     print("{}: {}".format(lang, stats.mannwhitneyu(product_result_dict[lang], test_result_dict[lang], alternative='two-sided')))
+    #     print("")
 
-    for lang in sorted_languages:
-        key = convert_to_output_str(lang) + "(product)"
-        result_dict[key] = product_result_dict[lang]
-        print("{}-count: {}".format(key, len(product_result_dict[lang])))
-        print("{}-min: {}".format(key, min(product_result_dict[lang])))
-        print("{}-max: {}".format(key, max(product_result_dict[lang])))
-        print("{}-median: {}".format(key, np.median(product_result_dict[lang])))
-        key = convert_to_output_str(lang) + "(test)"
-        result_dict[key] = test_result_dict[lang]
-        print("{}-count: {}".format(key, len(test_result_dict[lang])))
-        print("{}-min: {}".format(key, min(test_result_dict[lang])))
-        print("{}-max: {}".format(key, max(test_result_dict[lang])))
-        print("{}-median: {}".format(key, np.median(test_result_dict[lang])))
-    boxplot_file_path = os.path.join(project_root, "dest", "results", "RQ2.pdf")
-    output_boxplot(result_dict, boxplot_file_path)
+    # for lang in sorted_languages:
+    #     key = convert_to_output_str(lang) + "(product)"
+    #     result_dict[key] = product_result_dict[lang]
+    #     print("{}-count: {}".format(key, len(product_result_dict[lang])))
+    #     print("{}-min: {}".format(key, min(product_result_dict[lang])))
+    #     print("{}-max: {}".format(key, max(product_result_dict[lang])))
+    #     print("{}-median: {}".format(key, np.median(product_result_dict[lang])))
+    #     key = convert_to_output_str(lang) + "(test)"
+    #     result_dict[key] = test_result_dict[lang]
+    #     print("{}-count: {}".format(key, len(test_result_dict[lang])))
+    #     print("{}-min: {}".format(key, min(test_result_dict[lang])))
+    #     print("{}-max: {}".format(key, max(test_result_dict[lang])))
+    #     print("{}-median: {}".format(key, np.median(test_result_dict[lang])))
+    # boxplot_file_path = os.path.join(project_root, "dest", "results", "RQ2.pdf")
+
+
+
+    # output_boxplot(result_dict, boxplot_file_path)
     
 
 def generate_rq3(df):
@@ -272,28 +304,30 @@ def generate_rq3(df):
     product_result_dict = get_co_modification_ratio(df, "product")
     test_result_dict = get_co_modification_ratio(df, "test")
 
-    result_dict = {}
-    languages = product_result_dict.keys()
-    sorted_languages = sorted(languages, reverse=True)
-    for lang in sorted_languages:
-        print("{}: {}".format(lang, stats.mannwhitneyu(product_result_dict[lang], test_result_dict[lang], alternative='two-sided')))
-        print("")
+    output_boxplot_for_letter(product_result_dict, test_result_dict, os.path.join(project_root, "dest", "results", "RQ3.pdf"))
 
-    for lang in sorted_languages:
-        key = convert_to_output_str(lang) + "(product)"
-        result_dict[key] = product_result_dict[lang]
-        print("{}-count: {}".format(key, len(product_result_dict[lang])))
-        print("{}-min: {}".format(key, min(product_result_dict[lang])))
-        print("{}-max: {}".format(key, max(product_result_dict[lang])))
-        print("{}-median: {}".format(key, np.median(product_result_dict[lang])))
-        key = convert_to_output_str(lang) + "(test)"
-        result_dict[key] = test_result_dict[lang]
-        print("{}-count: {}".format(key, len(test_result_dict[lang])))
-        print("{}-min: {}".format(key, min(test_result_dict[lang])))
-        print("{}-max: {}".format(key, max(test_result_dict[lang])))
-        print("{}-median: {}".format(key, np.median(test_result_dict[lang])))
-    boxplot_file_path = os.path.join(project_root, "dest", "results", "RQ3.pdf")
-    output_boxplot(result_dict, boxplot_file_path)
+    # result_dict = {}
+    # languages = product_result_dict.keys()
+    # sorted_languages = sorted(languages, reverse=True)
+    # for lang in sorted_languages:
+    #     print("{}: {}".format(lang, stats.mannwhitneyu(product_result_dict[lang], test_result_dict[lang], alternative='two-sided')))
+    #     print("")
+
+    # for lang in sorted_languages:
+    #     key = convert_to_output_str(lang) + "(product)"
+    #     result_dict[key] = product_result_dict[lang]
+    #     print("{}-count: {}".format(key, len(product_result_dict[lang])))
+    #     print("{}-min: {}".format(key, min(product_result_dict[lang])))
+    #     print("{}-max: {}".format(key, max(product_result_dict[lang])))
+    #     print("{}-median: {}".format(key, np.median(product_result_dict[lang])))
+    #     key = convert_to_output_str(lang) + "(test)"
+    #     result_dict[key] = test_result_dict[lang]
+    #     print("{}-count: {}".format(key, len(test_result_dict[lang])))
+    #     print("{}-min: {}".format(key, min(test_result_dict[lang])))
+    #     print("{}-max: {}".format(key, max(test_result_dict[lang])))
+    #     print("{}-median: {}".format(key, np.median(test_result_dict[lang])))
+    # boxplot_file_path = os.path.join(project_root, "dest", "results", "RQ3.pdf")
+    # output_boxplot(result_dict, boxplot_file_path)
         
 
 def main():
@@ -302,7 +336,6 @@ def main():
         return
     os.makedirs(os.path.join(project_root, "dest", "results"), exist_ok=True)
     
-    generate_rq1(df)
     generate_rq2(df)
     generate_rq3(df)
 
